@@ -1,19 +1,27 @@
 import Phaser from 'phaser'
 
-import HelloWorldScene from './HelloWorldScene'
+import BattleScene from './scene/battle-scene'
+import Preloader from './scene/preloader'
 
 const config: Phaser.Types.Core.GameConfig = {
-	type: Phaser.AUTO,
-	parent: 'app',
-	width: 800,
-	height: 600,
-	physics: {
-		default: 'arcade',
-		arcade: {
-			gravity: { y: 200 },
-		},
-	},
-	scene: [HelloWorldScene],
+	type: Phaser.CANVAS,
+	pixelArt: false,
+	parent: "app",
+	width: 1024,
+	height: 576,
+	scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+	// physics: {
+	// 	default: 'arcade',
+	// 	arcade: {
+	// 		gravity: { y: 200 },
+	// 	},
+	// },
+
+
+	scene: [Preloader, BattleScene],
 }
 
 export default new Phaser.Game(config)

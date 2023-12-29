@@ -1,0 +1,26 @@
+export const ASSET_KEYS = Object.freeze({
+  // Background
+  CITY: "CITY",
+
+  // CHARCACTER
+  MAFIA: "MAFIA",
+  POLICE: "POLICE",
+
+  // Health components
+  HEALTH_BAR_BACKGROUND: "HEALTH_BAR_BACKGROUND",
+  LEFT_CAP: "LEFT_CAP",
+  MIDDLE: "MIDDLE",
+  RIGHT_CAP: "RIGHT_CAP",
+  LEFT_CAP_SHADOW: "LEFT_CAP_SHADOW",
+  MIDDLE_SHADOW: "MIDDLE_SHADOW",
+  RIGHT_CAP_SHADOW: "RIGHT_CAP_SHADOW",
+  
+  //Cursor
+  CURSOR: "CURSOR",
+});
+
+export const SCENE_KEYS = Object.freeze({
+  PRELOAD_SCENE: 'PRELOAD_SCENE',
+  BATTLE_SCENE: 'BATTLE_SCENE',
+})
+
