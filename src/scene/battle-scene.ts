@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import { ASSET_KEYS, DIRECTION, SCENE_KEYS, direction } from "../assets/keys";
 import { BattleMenu } from "../battle/ui/menu/battle-menu";
+import { Background } from "../battle/background";
+import { HealthBar } from "../battle/ui/health-bar";
 
 export default class BattleScene extends Phaser.Scene {
   #battleMenu!: BattleMenu;
@@ -12,13 +14,16 @@ export default class BattleScene extends Phaser.Scene {
 
   create() {
     // create background
-    this.add.image(0, 0, ASSET_KEYS.CITY).setOrigin(0);
+    const background = new Background(this);
+    background.showCity();
     // create player
     this.add.image(256, 316, ASSET_KEYS.MAFIA, 0);
     // create enemy
     this.add.image(768, 316, ASSET_KEYS.POLICE, 0);
 
     // render out the player health bar
+    const playerHealthBar = new HealthBar(this, 34, 34);
+
     const playerName = this.add.text(30, 20, ASSET_KEYS.MAFIA, {
       color: "#7E3D3F",
       fontSize: "32px",
@@ -29,7 +34,7 @@ export default class BattleScene extends Phaser.Scene {
         .setOrigin(0)
         .setScale(1, 0.85),
       playerName,
-      this.#createHealth(34, 34),
+      playerHealthBar.container,
       this.add.text(playerName.width + 35, 23, "L5", {
         color: "#ED474B",
         fontSize: "28px",
@@ -46,8 +51,17 @@ export default class BattleScene extends Phaser.Scene {
         })
         .setOrigin(1, 0),
     ]);
+    // animated player healthbar
+    playerHealthBar.setMeterPercentageAnimated(0.5, {
+      duration: 3000,
+      callback: () => {
+        console.log("animation completed");
+      },
+    });
 
     // render out the enemy health bar
+    const enemyHealthbar = new HealthBar(this, 34, 34);
+
     const enemyMonsterName = this.add.text(30, 20, ASSET_KEYS.POLICE, {
       color: "#7E3D3F",
       fontSize: "32px",
@@ -58,7 +72,7 @@ export default class BattleScene extends Phaser.Scene {
         .setOrigin(0)
         .setScale(1, 0.8),
       enemyMonsterName,
-      this.#createHealth(34, 34),
+      enemyHealthbar.container,
       this.add.text(enemyMonsterName.width + 35, 23, "L5", {
         color: "#ED474B",
         fontSize: "28px",
@@ -107,24 +121,5 @@ export default class BattleScene extends Phaser.Scene {
     if (selectedDirection !== DIRECTION.NONE) {
       this.#battleMenu.handlePlayerInput(selectedDirection);
     }
-  }
-
-  #createHealth(x: number, y: number) {
-    const scaleY = 0.7;
-    const leftCap = this.add
-      .image(x, y, ASSET_KEYS.LEFT_CAP)
-      .setOrigin(0, 0.5)
-      .setScale(1, scaleY);
-    const middle = this.add
-      .image(leftCap.x + leftCap.width, y, ASSET_KEYS.MIDDLE)
-      .setOrigin(0, 0.5)
-      .setScale(1, scaleY);
-    middle.displayWidth = 360;
-    const rightCap = this.add
-      .image(middle.x + middle.displayWidth, y, ASSET_KEYS.RIGHT_CAP)
-      .setOrigin(0, 0.5)
-      .setScale(1, scaleY);
-
-    return this.add.container(x, y, [leftCap, middle, rightCap]);
   }
 }

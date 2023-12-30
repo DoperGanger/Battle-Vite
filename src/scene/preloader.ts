@@ -27,6 +27,19 @@ export default class Preloader extends Phaser.Scene {
       ASSET_KEYS.RIGHT_CAP,
       "/images/kenneys-assets/ui-space-expansion/barHorizontal_green_right.png"
     );
+    this.load.image(
+      ASSET_KEYS.LEFT_CAP_SHADOW,
+      "/images/kenneys-assets/ui-space-expansion/barHorizontal_shadow_left.png"
+    );
+    this.load.image(
+      ASSET_KEYS.MIDDLE_SHADOW,
+      "/images/kenneys-assets/ui-space-expansion/barHorizontal_shadow_mid.png"
+    );
+    this.load.image(
+      ASSET_KEYS.RIGHT_CAP_SHADOW,
+      "/images/kenneys-assets/ui-space-expansion/barHorizontal_shadow_right.png"
+    );
+
 
     this.load.image(ASSET_KEYS.CURSOR, "/images/monster-tamer/ui/cursor.png");
   }
