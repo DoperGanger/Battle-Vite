@@ -40,7 +40,6 @@ export const BATTLE_UI_TEXT_STYLE = Object.freeze({
   fontSize: "30px",
 });
 
-// Define the DIRECTION constant
 export const DIRECTION = Object.freeze({
   LEFT: "LEFT",
   RIGHT: "RIGHT",
@@ -48,7 +47,14 @@ export const DIRECTION = Object.freeze({
   DOWN: "DOWN",
   NONE: "NONE",
 } as const);
-// Define the Direction type based on DIRECTION keys
 export type direction = keyof typeof DIRECTION;
 
+// To keep track of state
+export const ACTIVE_BATTLE_MENU = Object.freeze({
+  MAIN: "MAIN",
+  FIGHT: "FIGHT",
+  PAY: "PAY",
+  RUN: "RUN",
+} as const);
+export type activeBattleMenu = keyof typeof ACTIVE_BATTLE_MENU;
 

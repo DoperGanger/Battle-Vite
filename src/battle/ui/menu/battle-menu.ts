@@ -1,9 +1,11 @@
 import Phaser from "phaser";
 import {
+  ACTIVE_BATTLE_MENU,
   ASSET_KEYS,
   BATTLE_MENU_OPTIONS,
   BATTLE_UI_TEXT_STYLE,
   DIRECTION,
+  activeBattleMenu,
   battleMenuOptions,
   direction,
 } from "../../../assets/keys";
@@ -15,16 +17,28 @@ export class BattleMenu {
   #battleTextGameObjectLine2!: Phaser.GameObjects.Text;
   #mainBattleMenuCursorPhaserImageGameObject!: Phaser.GameObjects.Image;
   #selectedBattleMenuOption!: battleMenuOptions;
+  #activeBattleMenu?: activeBattleMenu; //state?
+
+  // callback declare
+  #queuedInfoPanelMessages!: string[];
+  #queuedInfoPanelCallback?: () => void | undefined;
+  #waitingForPlayerInput!: boolean;
 
   constructor(scene: Phaser.Scene) {
     this.#scene = scene;
+    this.#activeBattleMenu = ACTIVE_BATTLE_MENU.MAIN; // state?
     this.#selectedBattleMenuOption = BATTLE_MENU_OPTIONS.FIGHT;
+    this.#queuedInfoPanelMessages = [];
+    this.#queuedInfoPanelCallback = undefined;
+    this.#waitingForPlayerInput = false;
     this.#createMainInfoPane();
     this.#createMainBattlemenu();
   }
 
-  showMainbattlemenu() {
+  showMainBattleMenu() {
+    this.#activeBattleMenu = ACTIVE_BATTLE_MENU.MAIN; // state?
     this.#mainBattleMenuPhaserContainerGameObject.setAlpha(1);
+    this.#battleTextGameObjectLine1.setText("You encountered the...");
     this.#battleTextGameObjectLine1.setAlpha(1);
     this.#battleTextGameObjectLine2.setAlpha(1);
 
@@ -35,7 +49,7 @@ export class BattleMenu {
     );
   }
 
-  hideMainbattlemenu() {
+  hideMainBattleMenu() {
     this.#mainBattleMenuPhaserContainerGameObject.setAlpha(0);
     this.#battleTextGameObjectLine1.setAlpha(0);
     this.#battleTextGameObjectLine2.setAlpha(0);
@@ -43,8 +57,55 @@ export class BattleMenu {
 
   handlePlayerInput(input: direction | "OK" | "CANCEL") {
     console.log(input);
+
+    // callback 1
+    if (this.#waitingForPlayerInput && (input === "CANCEL" || input === "OK")) {
+      this.#updateInfoPaneWithMessage();
+      return;
+    }
+
+    // cursor handling
     this.#updateSelectedBattleMenuOptionFromInput(input);
     this.#moveMainBattleMenuCursor();
+
+    // battle option selection
+
+    if (input === "OK") {
+      this.#handlePlayerChooseMainBattleOption();
+    }
+  }
+
+  // callback 2
+  updateInfoPaneMessagesAndWaitForInput(
+    messages: string[],
+    callback: () => void
+  ) {
+    this.#queuedInfoPanelMessages = messages;
+    this.#queuedInfoPanelCallback = callback;
+
+    this.#updateInfoPaneWithMessage();
+  }
+
+  // callback 3
+  #updateInfoPaneWithMessage() {
+    this.#waitingForPlayerInput = false;
+    this.#battleTextGameObjectLine1.setText("").setAlpha(1);
+
+    // check if all messages have been displayed from the queue and call the callback
+    if (this.#queuedInfoPanelMessages.length === 0) {
+      if (this.#queuedInfoPanelCallback) {
+        this.#queuedInfoPanelCallback();
+        this.#queuedInfoPanelCallback = undefined;
+      }
+      return;
+    }
+
+    // get first message from queue and animate message
+    const messageToDisplay = this.#queuedInfoPanelMessages.shift();
+    if (messageToDisplay !== undefined) {
+      this.#battleTextGameObjectLine1.setText(messageToDisplay);
+      this.#waitingForPlayerInput = true;
+    }
   }
 
   #createMainInfoPane() {
@@ -127,7 +188,7 @@ export class BattleMenu {
       ]
     );
 
-    this.hideMainbattlemenu();
+    this.hideMainBattleMenu();
   }
 
   #createMainInfoSubPane() {
@@ -243,6 +304,36 @@ export class BattleMenu {
       //   return;
       default:
         return;
+    }
+  }
+
+  #handlePlayerChooseMainBattleOption() {
+    this.hideMainBattleMenu();
+
+    if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.FIGHT) {
+      this.updateInfoPaneMessagesAndWaitForInput(
+        ["You choose to FIGHT"],
+        () => {
+          this.showMainBattleMenu();
+        }
+      );
+      return;
+    }
+
+    if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.PAY) {
+      // this.#activeBattleMenu = ACTIVE_BATTLE_MENU.PAY;
+      this.updateInfoPaneMessagesAndWaitForInput(["You choose to PAY"], () => {
+        this.showMainBattleMenu();
+      });
+      return;
+    }
+
+    if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.RUN) {
+      // this.#activeBattleMenu = ACTIVE_BATTLE_MENU.RUN;
+      this.updateInfoPaneMessagesAndWaitForInput(["You Choose to RUN"], () => {
+        this.showMainBattleMenu();
+      });
+      return;
     }
   }
 }

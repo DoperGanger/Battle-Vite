@@ -72,7 +72,7 @@ export default class BattleScene extends Phaser.Scene {
 
     // render main info pane and sub info pane
     this.#battleMenu = new BattleMenu(this);
-    this.#battleMenu.showMainbattlemenu();
+    this.#battleMenu.showMainBattleMenu();
 
     // cursor key control
     this.#cursorKeys = this.input.keyboard.createCursorKeys();
@@ -84,16 +84,16 @@ export default class BattleScene extends Phaser.Scene {
     );
 
     if (wasSpaceKeyPressed) {
-      this.#battleMenu.handlePlayerInput('OK');
+      this.#battleMenu.handlePlayerInput("OK");
       return;
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.#cursorKeys.shift)) {
-      this.#battleMenu.handlePlayerInput('CANCEL');
+      this.#battleMenu.handlePlayerInput("CANCEL");
       return;
     }
 
-	let selectedDirection:direction = DIRECTION.NONE;
+    let selectedDirection: direction = DIRECTION.NONE;
     if (this.#cursorKeys.left.isDown) {
       selectedDirection = DIRECTION.LEFT;
     } else if (this.#cursorKeys.right.isDown) {
@@ -107,8 +107,6 @@ export default class BattleScene extends Phaser.Scene {
     if (selectedDirection !== DIRECTION.NONE) {
       this.#battleMenu.handlePlayerInput(selectedDirection);
     }
-
-
   }
 
   #createHealth(x: number, y: number) {
