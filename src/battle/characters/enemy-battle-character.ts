@@ -8,7 +8,7 @@ const ENEMY_POSITION = Object.freeze({
   });
   
   export class EnemyBattleCharacter extends BattleCharacter {
-    constructor(config: BattleCharacterConfig) {
-      super(config, ENEMY_POSITION);
+    constructor(config:BattleCharacterConfig) {
+      super({ ...config, scaleHealthBarBackgroundImageByY: 0.8 }, ENEMY_POSITION);
     }
   }

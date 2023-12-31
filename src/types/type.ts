@@ -1,6 +1,7 @@
 export interface BattleCharacterConfig {
   scene: Phaser.Scene;
   characterDetails: Character;
+  scaleHealthBarBackgroundImageByY: number;
 }
 
 export interface Character {
@@ -11,6 +12,7 @@ export interface Character {
   currentHp: number;
   baseAttack: number;
   attackIds: number[];
+  currentLevel: number;
 }
 
 export interface Coordinate {
