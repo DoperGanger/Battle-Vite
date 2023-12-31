@@ -19,7 +19,7 @@ export class BattleMenu {
   #selectedBattleMenuOption!: battleMenuOptions;
   #activeBattleMenu?: activeBattleMenu; //state?
 
-  // callback declare
+  // Callback declare
   #queuedInfoPanelMessages!: string[];
   #queuedInfoPanelCallback?: () => void | undefined;
   #waitingForPlayerInput!: boolean;
@@ -58,24 +58,24 @@ export class BattleMenu {
   handlePlayerInput(input: direction | "OK" | "CANCEL") {
     console.log(input);
 
-    // callback 1
+    // Callback 1
     if (this.#waitingForPlayerInput && (input === "CANCEL" || input === "OK")) {
       this.#updateInfoPaneWithMessage();
       return;
     }
 
-    // cursor handling
+    // Cursor handling
     this.#updateSelectedBattleMenuOptionFromInput(input);
     this.#moveMainBattleMenuCursor();
 
-    // battle option selection
+    // Battle option selection
 
     if (input === "OK") {
       this.#handlePlayerChooseMainBattleOption();
     }
   }
 
-  // callback 2
+  // Callback 2
   updateInfoPaneMessagesAndWaitForInput(
     messages: string[],
     callback: () => void
@@ -86,12 +86,12 @@ export class BattleMenu {
     this.#updateInfoPaneWithMessage();
   }
 
-  // callback 3
+  // Callback 3
   #updateInfoPaneWithMessage() {
     this.#waitingForPlayerInput = false;
     this.#battleTextGameObjectLine1.setText("").setAlpha(1);
 
-    // check if all messages have been displayed from the queue and call the callback
+    // Check if all messages have been displayed from the queue and call the callback
     if (this.#queuedInfoPanelMessages.length === 0) {
       if (this.#queuedInfoPanelCallback) {
         this.#queuedInfoPanelCallback();
@@ -100,7 +100,7 @@ export class BattleMenu {
       return;
     }
 
-    // get first message from queue and animate message
+    // Get first message from queue and animate message
     const messageToDisplay = this.#queuedInfoPanelMessages.shift();
     if (messageToDisplay !== undefined) {
       this.#battleTextGameObjectLine1.setText(messageToDisplay);
@@ -113,7 +113,7 @@ export class BattleMenu {
     const rectHeight = 124;
     const borderRadius = 20; // Set the border radius
 
-    // Create a Graphics object
+    // Create a graphics object
     const graphics = this.#scene.add.graphics();
 
     // Set line style for the border
@@ -141,7 +141,7 @@ export class BattleMenu {
   }
 
   #createMainBattlemenu() {
-    // text line
+    // Text line
     this.#battleTextGameObjectLine1 = this.#scene.add.text(
       30,
       468,
@@ -155,7 +155,7 @@ export class BattleMenu {
       BATTLE_UI_TEXT_STYLE
     );
 
-    // cursor
+    // Cursor
     this.#mainBattleMenuCursorPhaserImageGameObject = this.#scene.add
       .image(ASSET_KEYS.CURSOR_X, ASSET_KEYS.CURSOR_Y, ASSET_KEYS.CURSOR, 0)
       .setOrigin(0.5)
@@ -196,7 +196,7 @@ export class BattleMenu {
     const rectHeight = 124;
     const borderRadius = 20; // Set the border radius
 
-    // Create a Graphics object
+    // Create a graphics object
     const graphics = this.#scene.add.graphics();
 
     // Set line style for the border

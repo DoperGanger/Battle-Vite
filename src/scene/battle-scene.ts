@@ -3,27 +3,45 @@ import { ASSET_KEYS, DIRECTION, SCENE_KEYS, direction } from "../assets/keys";
 import { BattleMenu } from "../battle/ui/menu/battle-menu";
 import { Background } from "../battle/background";
 import { HealthBar } from "../battle/ui/health-bar";
+import { EnemyBattleCharacter } from "../battle/characters/enemy-battle-character";
 
 export default class BattleScene extends Phaser.Scene {
   #battleMenu!: BattleMenu;
   #cursorKeys!: Phaser.Types.Input.Keyboard.CursorKeys;
+  #activeEnemyCharacter!: EnemyBattleCharacter;
+
 
   constructor() {
     super(SCENE_KEYS.BATTLE_SCENE);
   }
 
   create() {
-    // create background
+    // Create background
     const background = new Background(this);
     background.showCity();
-    // create player
+
+    // Create player
     this.add.image(256, 316, ASSET_KEYS.MAFIA, 0);
-    // create enemy
-    this.add.image(768, 316, ASSET_KEYS.POLICE, 0);
 
-    // render out the player health bar
+    // Create enemy
+    // this.add.image(768, 316, ASSET_KEYS.POLICE, 0);
+    this.#activeEnemyCharacter = new EnemyBattleCharacter(
+      {
+        scene: this,
+        characterDetails: {
+          name: ASSET_KEYS.POLICE,
+          assetKey: ASSET_KEYS.POLICE,
+          assetFrame: 0,
+          currentHp: 25,
+          maxHp: 25,
+          attackIds: [],
+          baseAttack: 5,
+        },
+      },
+    );
+
+    // Render out the player health bar
     const playerHealthBar = new HealthBar(this, 34, 34);
-
     const playerName = this.add.text(30, 20, ASSET_KEYS.MAFIA, {
       color: "#7E3D3F",
       fontSize: "32px",
@@ -51,17 +69,18 @@ export default class BattleScene extends Phaser.Scene {
         })
         .setOrigin(1, 0),
     ]);
-    // animated player healthbar
+    // Animated player healthbar
     playerHealthBar.setMeterPercentageAnimated(0.5, {
       duration: 3000,
       callback: () => {
         console.log("animation completed");
       },
     });
+   
 
-    // render out the enemy health bar
-    const enemyHealthbar = new HealthBar(this, 34, 34);
-
+    // Render out the enemy health bar
+    // const enemyHealthbar = new HealthBar(this, 34, 34);
+    const enemyHealthBar = this.#activeEnemyCharacter._healthBar;
     const enemyMonsterName = this.add.text(30, 20, ASSET_KEYS.POLICE, {
       color: "#7E3D3F",
       fontSize: "32px",
@@ -72,7 +91,7 @@ export default class BattleScene extends Phaser.Scene {
         .setOrigin(0)
         .setScale(1, 0.8),
       enemyMonsterName,
-      enemyHealthbar.container,
+      enemyHealthBar.container,
       this.add.text(enemyMonsterName.width + 35, 23, "L5", {
         color: "#ED474B",
         fontSize: "28px",
@@ -83,12 +102,15 @@ export default class BattleScene extends Phaser.Scene {
         fontStyle: "italic",
       }),
     ]);
+    // Enemy take damage
+    this.#activeEnemyCharacter.takeDamage(25);
+    console.log("Enemy is fainted: ",this.#activeEnemyCharacter.isFainted);
 
-    // render main info pane and sub info pane
+    // Render main info pane and sub info pane
     this.#battleMenu = new BattleMenu(this);
     this.#battleMenu.showMainBattleMenu();
 
-    // cursor key control
+    // Cursor key control
     this.#cursorKeys = this.input.keyboard.createCursorKeys();
   }
 
