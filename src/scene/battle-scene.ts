@@ -4,7 +4,6 @@ import { BattleMenu } from "../battle/ui/menu/battle-menu";
 import { Background } from "../battle/background";
 import { EnemyBattleCharacter } from "../battle/characters/enemy-battle-character";
 import { PlayerBattleCharacter } from "../battle/characters/player-battle-character";
-import { BattleState } from "../types/type";
 
 export default class BattleScene extends Phaser.Scene {
   #battleMenu!: BattleMenu;
@@ -36,7 +35,7 @@ export default class BattleScene extends Phaser.Scene {
         assetFrame: 0,
         currentHp: 25,
         maxHp: 25,
-        attackIds: [1, 2], // Choose attack
+        attackIds: [1, 2, 3, 4], // Choose attack
         baseAttack: 5,
         currentLevel: 6,
       },
@@ -53,7 +52,7 @@ export default class BattleScene extends Phaser.Scene {
         assetFrame: 0,
         currentHp: 25,
         maxHp: 25,
-        attackIds: [1, 2], // Choose attack
+        attackIds: [4], // Choose attack
         baseAttack: 5,
         currentLevel: 6,
       },
@@ -61,7 +60,7 @@ export default class BattleScene extends Phaser.Scene {
     });
 
     // Render main info pane and sub info pane
-    this.#battleMenu = new BattleMenu(this, this.#activePlayerCharacter); //?
+    this.#battleMenu = new BattleMenu(this); //?
     this.#battleMenu.showMainBattleMenu();
 
     // Cursor key control
@@ -79,8 +78,8 @@ export default class BattleScene extends Phaser.Scene {
       this.#battleMenu.handlePlayerInput("OK");
       this.#activePlayerAttackIndex = this.#battleMenu.selectedAttack;
 
-      if (this.#battleMenu.currentState === BattleState.WAITING_FOR_PLAYER) {
-        this.#battleMenu.currentState = BattleState.PLAYER_TURN;
+      if (this.#battleMenu.attackState === false) {
+        this.#battleMenu.attackState = true;
         this.handleBattleSequence();
       }
     }
@@ -117,50 +116,18 @@ export default class BattleScene extends Phaser.Scene {
     this.#playerAttack();
   }
 
-  // #playerAttack() {
-  //   this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
-  //     [
-  //       `${this.#activePlayerCharacter.name} used ${
-  //         this.#activePlayerCharacter.attacks[this.#activePlayerAttackIndex].name
-  //       }`,
-  //     ],
-  //     () => {
-  //       this.time.delayedCall(500, () => {
-  //         // Characters attacking alternately
-  //         this.#activeEnemyCharacter.takeDamage(20, () => {
-  //           this.#enemyAttack();
-  //         });
-  //       });
-  //     }
-  //   );
-  // }
-
-  // #enemyAttack() {
-  //   this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
-  //     [
-  //       `${this.#activeEnemyCharacter.name} ${
-  //         this.#activeEnemyCharacter.attacks[this.#activePlayerAttackIndex+1].name
-  //       } you back`,
-  //     ],
-  //     () => {
-  //       this.time.delayedCall(500, () => {
-  //         // Characters attacking alternately
-  //         this.#activePlayerCharacter.takeDamage(20, () => {
-  //           this.#battleMenu.showMainBattleMenu();
-  //         });
-  //       });
-  //     }
-  //   );
-  // }
-
   #playerAttack() {
     this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
-      [`mafia choose to attack`],
+      [
+        `${this.#activePlayerCharacter.name} attempt to ${
+          this.#activePlayerCharacter.attacks[this.#activePlayerAttackIndex]
+            .name
+        }`,
+      ],
       () => {
         this.time.delayedCall(500, () => {
           // Characters attacking alternately
           this.#activeEnemyCharacter.takeDamage(20, () => {
-            this.#battleMenu.currentState = BattleState.ENEMY_TURN;
             this.#enemyAttack();
           });
         });
@@ -170,12 +137,11 @@ export default class BattleScene extends Phaser.Scene {
 
   #enemyAttack() {
     this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
-      [`police attack back`],
+      [` ${this.#activeEnemyCharacter.attacks[0].name} attack you back`],
       () => {
         this.time.delayedCall(500, () => {
           // Characters attacking alternately
           this.#activePlayerCharacter.takeDamage(20, () => {
-            this.#battleMenu.currentState = BattleState.WAITING_FOR_PLAYER;
             this.#battleMenu.showMainBattleMenu();
           });
         });

@@ -7,9 +7,6 @@ import {
   battleMenuOptions,
   direction,
 } from "../../../assets/keys";
-import { BattleCharacter } from "../../characters/battle-character";
-import { EnemyBattleCharacter } from "../../characters/enemy-battle-character";
-import { BattleState } from "../../../types/type";
 
 export class BattleMenu {
   #scene!: Phaser.Scene;
@@ -20,27 +17,23 @@ export class BattleMenu {
   #selectedBattleMenuOption!: battleMenuOptions;
   #selectedAttackIndex!: number; //#
 
-
-  public currentState: BattleState = BattleState.WAITING_FOR_PLAYER
-
-  #activeEnemyCharacter!: EnemyBattleCharacter; //?
-  #activePlayerCharacter!: BattleCharacter; // ?
+  // Attack state
+  public attackState!: boolean;
 
   // Callback declare
   #queuedInfoPanelMessages!: string[];
   #queuedInfoPanelCallback?: () => void | undefined;
   #waitingForPlayerInput!: boolean;
 
-  constructor(scene: Phaser.Scene, activePlayerCharacter: BattleCharacter) {
-    //?
+  constructor(scene: Phaser.Scene) {
     this.#scene = scene;
-    this.#activePlayerCharacter = activePlayerCharacter; //?
     this.#selectedBattleMenuOption = BATTLE_MENU_OPTIONS.FIGHT;
     this.#queuedInfoPanelMessages = [];
     this.#queuedInfoPanelCallback = undefined;
     this.#waitingForPlayerInput = false;
     this.#createMainInfoPane();
     this.#createMainBattlemenu();
+    this.attackState = false;
   }
 
   get selectedAttack(): number {
@@ -58,7 +51,9 @@ export class BattleMenu {
       ASSET_KEYS.CURSOR_X,
       ASSET_KEYS.CURSOR_Y
     );
-    this.#selectedAttackIndex = -1;
+
+    this.attackState = false; // Attack state
+    this.#selectedAttackIndex = -1; // Reset attack index
   }
 
   hideMainBattleMenu() {
@@ -85,8 +80,6 @@ export class BattleMenu {
     if (input === "OK") {
       this.#handlePlayerChooseMainBattleOptionWithIndex();
     }
-
-    
   }
 
   // Callback 2
@@ -355,7 +348,6 @@ export class BattleMenu {
   #handlePlayerChooseMainBattleOptionWithIndex() {
     let selectedMoveIndex = 0;
     this.hideMainBattleMenu();
-
     switch (this.#selectedBattleMenuOption) {
       case BATTLE_MENU_OPTIONS.FIGHT:
         selectedMoveIndex = 0;
