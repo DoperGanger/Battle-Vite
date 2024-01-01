@@ -7,42 +7,42 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(ASSET_KEYS.CITY, "/images/city.png");
-    this.load.image(ASSET_KEYS.MAFIA, "/images/mafia.png");
-    this.load.image(ASSET_KEYS.POLICE, "/images/police.png");
+    this.load.image(ASSET_KEYS.CITY, "/images/main-ui/city.png");
+    this.load.image(ASSET_KEYS.MAFIA, "/images/main-ui/mafia.png");
+    this.load.image(ASSET_KEYS.POLICE, "/images/main-ui/police.png");
 
     // Health
     this.load.image(
       ASSET_KEYS.HEALTH_BAR_BACKGROUND,
-      "/images/kenneys-assets/ui-space-expansion/custom-ui.png"
+      "/images/health/custom-ui.png"
     );
     this.load.image(
       ASSET_KEYS.LEFT_CAP,
-      "/images/kenneys-assets/ui-space-expansion/barHorizontal_green_left.png"
+      "/images/health/barHorizontal_green_left.png"
     );
     this.load.image(
       ASSET_KEYS.MIDDLE,
-      "/images/kenneys-assets/ui-space-expansion/barHorizontal_green_mid.png"
+      "/images/health/barHorizontal_green_mid.png"
     );
     this.load.image(
       ASSET_KEYS.RIGHT_CAP,
-      "/images/kenneys-assets/ui-space-expansion/barHorizontal_green_right.png"
+      "/images/health/barHorizontal_green_right.png"
     );
     this.load.image(
       ASSET_KEYS.LEFT_CAP_SHADOW,
-      "/images/kenneys-assets/ui-space-expansion/barHorizontal_shadow_left.png"
+      "/images/health/barHorizontal_shadow_left.png"
     );
     this.load.image(
       ASSET_KEYS.MIDDLE_SHADOW,
-      "/images/kenneys-assets/ui-space-expansion/barHorizontal_shadow_mid.png"
+      "/images/health/barHorizontal_shadow_mid.png"
     );
     this.load.image(
       ASSET_KEYS.RIGHT_CAP_SHADOW,
-      "/images/kenneys-assets/ui-space-expansion/barHorizontal_shadow_right.png"
+      "/images/health/barHorizontal_shadow_right.png"
     );
 
     // Cursor
-    this.load.image(ASSET_KEYS.CURSOR, "/images/monster-tamer/ui/cursor.png");
+    this.load.image(ASSET_KEYS.CURSOR, "/images/main-ui/cursor.png");
 
     // Attack json
     this.load.json(ASSET_KEYS.ATTACKS, "/data/attacks.json");
