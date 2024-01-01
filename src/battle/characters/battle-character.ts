@@ -30,8 +30,18 @@ export class BattleCharacter {
       this._characterDetails.assetKey,
       this._characterDetails.assetFrame || 0
     );
-
     this.#createHealthBarComponents(config.scaleHealthBarBackgroundImageByY);
+
+    //load json file
+    const data = this._scene.cache.json.get(ASSET_KEYS.ATTACKS);
+    this._characterDetails.attackIds.forEach((attackId) => {
+      const characterAttack = data.find(
+        (attack: Attack) => attack.id === attackId
+      );
+      if (characterAttack !== undefined) {
+        this._characterAttacks.push(characterAttack);
+      }
+    });
   }
 
   get isFainted(): boolean {
@@ -51,7 +61,7 @@ export class BattleCharacter {
   }
 
   get level(): number {
-    return this. _characterDetails.currentLevel
+    return this._characterDetails.currentLevel;
   }
 
   takeDamage(damage: number, callback?: () => void): void {
@@ -70,8 +80,8 @@ export class BattleCharacter {
     this._healthBar = new HealthBar(this._scene, 34, 34);
 
     const characterNameGameText = this._scene.add.text(30, 20, this.name, {
-      color: '#7E3D3F',
-      fontSize: '32px',
+      color: "#7E3D3F",
+      fontSize: "32px",
     });
 
     const healthBarBgImage = this._scene.add
@@ -79,15 +89,20 @@ export class BattleCharacter {
       .setOrigin(0)
       .setScale(1, scaleHealthBarBackgroundImageByY);
 
-    const monsterHealthBarLevelText = this._scene.add.text(characterNameGameText.width + 35, 23, ``, {
-      color: '#ED474B',
-      fontSize: '28px',
-    });
+    const monsterHealthBarLevelText = this._scene.add.text(
+      characterNameGameText.width + 35,
+      23,
+      ``,
+      {
+        color: "#ED474B",
+        fontSize: "28px",
+      }
+    );
 
-    const monsterHpText = this._scene.add.text(30, 55, 'HP', {
-      color: '#FF6505',
-      fontSize: '24px',
-      fontStyle: 'italic',
+    const monsterHpText = this._scene.add.text(30, 55, "HP", {
+      color: "#FF6505",
+      fontSize: "24px",
+      fontStyle: "italic",
     });
 
     this._phaserHealthBarGameContainer = this._scene.add.container(555, 0, [

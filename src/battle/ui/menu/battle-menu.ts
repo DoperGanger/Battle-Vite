@@ -1,14 +1,15 @@
 import Phaser from "phaser";
 import {
-  ACTIVE_BATTLE_MENU,
   ASSET_KEYS,
   BATTLE_MENU_OPTIONS,
   BATTLE_UI_TEXT_STYLE,
   DIRECTION,
-  activeBattleMenu,
   battleMenuOptions,
   direction,
 } from "../../../assets/keys";
+import { BattleCharacter } from "../../characters/battle-character";
+import { EnemyBattleCharacter } from "../../characters/enemy-battle-character";
+import { BattleState } from "../../../types/type";
 
 export class BattleMenu {
   #scene!: Phaser.Scene;
@@ -17,16 +18,23 @@ export class BattleMenu {
   #battleTextGameObjectLine2!: Phaser.GameObjects.Text;
   #mainBattleMenuCursorPhaserImageGameObject!: Phaser.GameObjects.Image;
   #selectedBattleMenuOption!: battleMenuOptions;
-  #activeBattleMenu?: activeBattleMenu; //state?
+  #selectedAttackIndex!: number; //#
+
+
+  public currentState: BattleState = BattleState.WAITING_FOR_PLAYER
+
+  #activeEnemyCharacter!: EnemyBattleCharacter; //?
+  #activePlayerCharacter!: BattleCharacter; // ?
 
   // Callback declare
   #queuedInfoPanelMessages!: string[];
   #queuedInfoPanelCallback?: () => void | undefined;
   #waitingForPlayerInput!: boolean;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, activePlayerCharacter: BattleCharacter) {
+    //?
     this.#scene = scene;
-    this.#activeBattleMenu = ACTIVE_BATTLE_MENU.MAIN; // state?
+    this.#activePlayerCharacter = activePlayerCharacter; //?
     this.#selectedBattleMenuOption = BATTLE_MENU_OPTIONS.FIGHT;
     this.#queuedInfoPanelMessages = [];
     this.#queuedInfoPanelCallback = undefined;
@@ -35,8 +43,11 @@ export class BattleMenu {
     this.#createMainBattlemenu();
   }
 
+  get selectedAttack(): number {
+    return this.#selectedAttackIndex;
+  }
+
   showMainBattleMenu() {
-    this.#activeBattleMenu = ACTIVE_BATTLE_MENU.MAIN; // state?
     this.#mainBattleMenuPhaserContainerGameObject.setAlpha(1);
     this.#battleTextGameObjectLine1.setText("You encountered the...");
     this.#battleTextGameObjectLine1.setAlpha(1);
@@ -47,6 +58,7 @@ export class BattleMenu {
       ASSET_KEYS.CURSOR_X,
       ASSET_KEYS.CURSOR_Y
     );
+    this.#selectedAttackIndex = -1;
   }
 
   hideMainBattleMenu() {
@@ -55,6 +67,7 @@ export class BattleMenu {
     this.#battleTextGameObjectLine2.setAlpha(0);
   }
 
+  ///
   handlePlayerInput(input: direction | "OK" | "CANCEL") {
     console.log(input);
 
@@ -69,10 +82,11 @@ export class BattleMenu {
     this.#moveMainBattleMenuCursor();
 
     // Battle option selection
-
     if (input === "OK") {
-      this.#handlePlayerChooseMainBattleOption();
+      this.#handlePlayerChooseMainBattleOptionWithIndex();
     }
+
+    
   }
 
   // Callback 2
@@ -107,6 +121,7 @@ export class BattleMenu {
       this.#waitingForPlayerInput = true;
     }
   }
+  ///
 
   #createMainInfoPane() {
     const padding = 4;
@@ -307,33 +322,56 @@ export class BattleMenu {
     }
   }
 
-  #handlePlayerChooseMainBattleOption() {
+  // #handlePlayerChooseMainBattleOption() {
+  //   this.hideMainBattleMenu();
+
+  //   if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.FIGHT) {
+  //     this.updateInfoPaneMessagesAndWaitForInput(
+  //       ["You choose to FIGHT"],
+  //       () => {
+  //         this.showMainBattleMenu();
+  //       }
+  //     );
+  //     return;
+  //   }
+
+  //   if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.PAY) {
+  //     // this.#activeBattleMenu = ACTIVE_BATTLE_MENU.PAY;
+  //     this.updateInfoPaneMessagesAndWaitForInput(["You choose to PAY"], () => {
+  //       this.showMainBattleMenu();
+  //     });
+  //     return;
+  //   }
+
+  //   if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.RUN) {
+  //     // this.#activeBattleMenu = ACTIVE_BATTLE_MENU.RUN;
+  //     this.updateInfoPaneMessagesAndWaitForInput(["You Choose to RUN"], () => {
+  //       this.showMainBattleMenu();
+  //     });
+  //     return;
+  //   }
+  // }
+
+  #handlePlayerChooseMainBattleOptionWithIndex() {
+    let selectedMoveIndex = 0;
     this.hideMainBattleMenu();
 
-    if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.FIGHT) {
-      this.updateInfoPaneMessagesAndWaitForInput(
-        ["You choose to FIGHT"],
-        () => {
-          this.showMainBattleMenu();
-        }
-      );
-      return;
+    switch (this.#selectedBattleMenuOption) {
+      case BATTLE_MENU_OPTIONS.FIGHT:
+        selectedMoveIndex = 0;
+        console.log("index", selectedMoveIndex);
+        break;
+      case BATTLE_MENU_OPTIONS.PAY:
+        selectedMoveIndex = 1;
+        console.log("index", selectedMoveIndex);
+        break;
+      case BATTLE_MENU_OPTIONS.RUN:
+        selectedMoveIndex = 2;
+        console.log("index", selectedMoveIndex);
+        break;
+      default:
     }
 
-    if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.PAY) {
-      // this.#activeBattleMenu = ACTIVE_BATTLE_MENU.PAY;
-      this.updateInfoPaneMessagesAndWaitForInput(["You choose to PAY"], () => {
-        this.showMainBattleMenu();
-      });
-      return;
-    }
-
-    if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.RUN) {
-      // this.#activeBattleMenu = ACTIVE_BATTLE_MENU.RUN;
-      this.updateInfoPaneMessagesAndWaitForInput(["You Choose to RUN"], () => {
-        this.showMainBattleMenu();
-      });
-      return;
-    }
+    this.#selectedAttackIndex = selectedMoveIndex;
   }
 }

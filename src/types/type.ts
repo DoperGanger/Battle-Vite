@@ -25,3 +25,8 @@ export interface Attack {
   name: string;
   animationName: string;
 }
+export enum BattleState {
+  WAITING_FOR_PLAYER,
+  PLAYER_TURN,
+  ENEMY_TURN,
+}

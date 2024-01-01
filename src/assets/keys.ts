@@ -15,10 +15,13 @@ export const ASSET_KEYS = Object.freeze({
   MIDDLE_SHADOW: "MIDDLE_SHADOW",
   RIGHT_CAP_SHADOW: "RIGHT_CAP_SHADOW",
 
-  //Cursor
+  // Cursor
   CURSOR: "CURSOR",
   CURSOR_X: 57,
   CURSOR_Y: 36,
+
+  // Attacks
+  ATTACKS: "ATTACKS" 
 });
 
 export const SCENE_KEYS = Object.freeze({
@@ -34,7 +37,6 @@ export const BATTLE_MENU_OPTIONS = Object.freeze({
 });
 export type battleMenuOptions = keyof typeof BATTLE_MENU_OPTIONS
 
-
 export const BATTLE_UI_TEXT_STYLE = Object.freeze({
   color: "black",
   fontSize: "30px",
@@ -48,13 +50,4 @@ export const DIRECTION = Object.freeze({
   NONE: "NONE",
 } as const);
 export type direction = keyof typeof DIRECTION;
-
-// To keep track of state
-export const ACTIVE_BATTLE_MENU = Object.freeze({
-  MAIN: "MAIN",
-  FIGHT: "FIGHT",
-  PAY: "PAY",
-  RUN: "RUN",
-} as const);
-export type activeBattleMenu = keyof typeof ACTIVE_BATTLE_MENU;
 

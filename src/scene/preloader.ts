@@ -11,6 +11,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(ASSET_KEYS.MAFIA, "/images/mafia.png");
     this.load.image(ASSET_KEYS.POLICE, "/images/police.png");
 
+    // Health
     this.load.image(
       ASSET_KEYS.HEALTH_BAR_BACKGROUND,
       "/images/kenneys-assets/ui-space-expansion/custom-ui.png"
@@ -40,8 +41,11 @@ export default class Preloader extends Phaser.Scene {
       "/images/kenneys-assets/ui-space-expansion/barHorizontal_shadow_right.png"
     );
 
-
+    // Cursor
     this.load.image(ASSET_KEYS.CURSOR, "/images/monster-tamer/ui/cursor.png");
+
+    // Attack json
+    this.load.json(ASSET_KEYS.ATTACKS, "/data/attacks.json");
   }
   create() {
     this.scene.start(SCENE_KEYS.BATTLE_SCENE);
