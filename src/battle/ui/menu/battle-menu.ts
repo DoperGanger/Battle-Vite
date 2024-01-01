@@ -20,7 +20,7 @@ export class BattleMenu {
 
   // Attack state
   // public attackState!: boolean;
-   public currentState!: CurrentState;
+  public currentState!: CurrentState;
 
   // Callback declare
   #queuedInfoPanelMessages!: string[];
@@ -36,7 +36,7 @@ export class BattleMenu {
     this.#createMainInfoPane();
     this.#createMainBattlemenu();
     // this.attackState = false; reset attack state
-    this.currentState = CurrentState.MENU
+    this.currentState = CurrentState.MENU;
   }
 
   get selectedAttack(): number {
@@ -56,7 +56,7 @@ export class BattleMenu {
     );
 
     // this.attackState = false; // reset attack state
-    this.currentState = CurrentState.MENU
+    this.currentState = CurrentState.MENU;
     this.#selectedAttackIndex = -1; // Reset attack index
   }
 

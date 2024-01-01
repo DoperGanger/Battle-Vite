@@ -37,7 +37,7 @@ export default class BattleScene extends Phaser.Scene {
         currentHp: 25,
         maxHp: 25,
         attackIds: [1, 2, 3, 4], // Choose attack
-        baseAttack: 5,
+        baseAttack: 20,
         currentLevel: 6,
       },
       scaleHealthBarBackgroundImageByY: 1, // Default value
@@ -133,24 +133,68 @@ export default class BattleScene extends Phaser.Scene {
       () => {
         this.time.delayedCall(500, () => {
           // Characters attacking alternately
-          this.#activeEnemyCharacter.takeDamage(20, () => {
-            this.#enemyAttack();
-          });
+          this.#activeEnemyCharacter.takeDamage(
+            this.#activePlayerCharacter.baseAttack,
+            () => {
+              this.#enemyAttack();
+            }
+          );
         });
       }
     );
   }
 
   #enemyAttack() {
+    if (this.#activeEnemyCharacter.isFainted) {
+      this.#posBattleSequenceCheck();
+      return;
+    }
     this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
       [` ${this.#activeEnemyCharacter.attacks[0].name} attack you back`],
       () => {
         this.time.delayedCall(500, () => {
           // Characters attacking alternately
-          this.#activePlayerCharacter.takeDamage(20, () => {
-            this.#battleMenu.showMainBattleMenu();
-          });
+          this.#activePlayerCharacter.takeDamage(
+            this.#activeEnemyCharacter.baseAttack,
+            () => {
+              this.#posBattleSequenceCheck();
+            }
+          );
         });
+      }
+    );
+  }
+
+  #posBattleSequenceCheck() {
+    if (this.#activePlayerCharacter.isFainted) {
+      this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
+        [`You died! `],
+        () => {
+          this.#transitionToNextScene();
+        }
+      );
+      return;
+    }
+
+    if (this.#activeEnemyCharacter.isFainted) {
+      this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
+        [`You beat the ${this.#activeEnemyCharacter.name} `],
+        () => {
+          this.#transitionToNextScene();
+        }
+      );
+      return;
+    }
+
+    this.#battleMenu.showMainBattleMenu();
+  }
+
+  #transitionToNextScene() {
+    this.cameras.main.fadeOut(2600, 0, 0, 0);
+    this.cameras.main.once(
+      Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+      () => {
+        this.scene.start(SCENE_KEYS.BATTLE_SCENE);
       }
     );
   }

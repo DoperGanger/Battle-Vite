@@ -5,6 +5,7 @@ import {
   Character,
   Coordinate,
 } from "../../types/type";
+import { DataUtils } from "../../utils/data-utils";
 import { HealthBar } from "../ui/health-bar";
 
 export class BattleCharacter {
@@ -33,15 +34,13 @@ export class BattleCharacter {
     this.#createHealthBarComponents(config.scaleHealthBarBackgroundImageByY);
 
     //load json file
-    const data = this._scene.cache.json.get(ASSET_KEYS.ATTACKS);
     this._characterDetails.attackIds.forEach((attackId) => {
-      const characterAttack = data.find(
-        (attack: Attack) => attack.id === attackId
-      );
+      const characterAttack = DataUtils.getCharacterAttack(this._scene, attackId);
       if (characterAttack !== undefined) {
         this._characterAttacks.push(characterAttack);
       }
     });
+
   }
 
   get isFainted(): boolean {
