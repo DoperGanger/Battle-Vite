@@ -7,6 +7,7 @@ import {
   battleMenuOptions,
   direction,
 } from "../../../assets/keys";
+import { CurrentState } from "../../../types/type";
 
 export class BattleMenu {
   #scene!: Phaser.Scene;
@@ -18,7 +19,8 @@ export class BattleMenu {
   #selectedAttackIndex!: number; //#
 
   // Attack state
-  public attackState!: boolean;
+  // public attackState!: boolean;
+   public currentState!: CurrentState;
 
   // Callback declare
   #queuedInfoPanelMessages!: string[];
@@ -33,7 +35,8 @@ export class BattleMenu {
     this.#waitingForPlayerInput = false;
     this.#createMainInfoPane();
     this.#createMainBattlemenu();
-    this.attackState = false;
+    // this.attackState = false; reset attack state
+    this.currentState = CurrentState.MENU
   }
 
   get selectedAttack(): number {
@@ -52,7 +55,8 @@ export class BattleMenu {
       ASSET_KEYS.CURSOR_Y
     );
 
-    this.attackState = false; // Attack state
+    // this.attackState = false; // reset attack state
+    this.currentState = CurrentState.MENU
     this.#selectedAttackIndex = -1; // Reset attack index
   }
 

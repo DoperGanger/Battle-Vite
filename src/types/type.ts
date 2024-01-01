@@ -25,3 +25,10 @@ export interface Attack {
   name: string;
   animationName: string;
 }
+
+export enum CurrentState {
+  MENU,
+  ATTACK,
+  PAY,
+  RUN,
+}

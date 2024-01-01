@@ -4,6 +4,7 @@ import { BattleMenu } from "../battle/ui/menu/battle-menu";
 import { Background } from "../battle/background";
 import { EnemyBattleCharacter } from "../battle/characters/enemy-battle-character";
 import { PlayerBattleCharacter } from "../battle/characters/player-battle-character";
+import { CurrentState } from "../types/type";
 
 export default class BattleScene extends Phaser.Scene {
   #battleMenu!: BattleMenu;
@@ -78,8 +79,13 @@ export default class BattleScene extends Phaser.Scene {
       this.#battleMenu.handlePlayerInput("OK");
       this.#activePlayerAttackIndex = this.#battleMenu.selectedAttack;
 
-      if (this.#battleMenu.attackState === false) {
-        this.#battleMenu.attackState = true;
+      // if (this.#battleMenu.attackState === false) {
+      //   this.#battleMenu.attackState = true;
+      //   this.handleBattleSequence();
+      // }
+
+      if (this.#battleMenu.currentState === CurrentState.MENU) {
+        this.#battleMenu.currentState = CurrentState.ATTACK;
         this.handleBattleSequence();
       }
     }
