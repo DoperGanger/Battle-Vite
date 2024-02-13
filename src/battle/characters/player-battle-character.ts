@@ -11,6 +11,7 @@ export class PlayerBattleCharacter extends BattleCharacter {
 
   constructor(config: BattleCharacterConfig) {
     super(config, PLAYER_POSITION);
+    this._phaserGameObject.setFlipX(true);
     this._phaserHealthBarGameContainer.setPosition(0, 0);
 
     this.#addHealthBarComponents();

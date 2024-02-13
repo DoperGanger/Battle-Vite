@@ -7,9 +7,9 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(ASSET_KEYS.CITY, "/images/main-ui/city.png");
-    this.load.image(ASSET_KEYS.MAFIA, "/images/main-ui/mafia.png");
-    this.load.image(ASSET_KEYS.POLICE, "/images/main-ui/police.png");
+    this.load.image(ASSET_KEYS.CITY, "/images/main-ui/Background.png");
+    this.load.image(ASSET_KEYS.MAFIA, "/images/main-ui/player.png");
+    this.load.image(ASSET_KEYS.POLICE, "/images/main-ui/e-police.png");
 
     // Health
     this.load.image(
