@@ -79,14 +79,29 @@ export default class BattleScene extends Phaser.Scene {
       this.#battleMenu.handlePlayerInput("OK");
       this.#activePlayerAttackIndex = this.#battleMenu.selectedAttack;
 
-      // if (this.#battleMenu.attackState === false) {
-      //   this.#battleMenu.attackState = true;
-      //   this.handleBattleSequence();
-      // }
-
       if (this.#battleMenu.currentState === CurrentState.MENU) {
-        this.#battleMenu.currentState = CurrentState.ATTACK;
-        this.handleBattleSequence();
+        if (this.#activePlayerAttackIndex === 0) {
+          this.#battleMenu.currentState = CurrentState.ATTACK;
+          this.handleBattleSequence();
+        }
+        if (this.#activePlayerAttackIndex === 1) {
+          this.#battleMenu.currentState = CurrentState.PAY;
+          this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
+            [`You Paid the cops! `],
+            () => {
+              this.#handlePay();
+            }
+          );
+        }
+        if (this.#activePlayerAttackIndex === 2) {
+          this.#battleMenu.currentState = CurrentState.RUN;
+          this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
+            [`Escaping... `],
+            () => {
+              this.#handleRun();
+            }
+          );
+        }
       }
     }
 
@@ -197,5 +212,18 @@ export default class BattleScene extends Phaser.Scene {
         this.scene.start(SCENE_KEYS.BATTLE_SCENE);
       }
     );
+  }
+
+  #handlePay() {
+    this.cameras.main.fadeOut(2600, 0, 0, 0);
+    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      this.scene.start(SCENE_KEYS.BATTLE_SCENE);
+    });
+  }
+  #handleRun() {
+    this.cameras.main.fadeOut(2600, 0, 0, 0);
+    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      this.scene.start(SCENE_KEYS.BATTLE_SCENE);
+    });
   }
 }

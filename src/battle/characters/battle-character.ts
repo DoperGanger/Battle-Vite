@@ -89,9 +89,9 @@ export class BattleCharacter {
       .setScale(1, scaleHealthBarBackgroundImageByY);
 
     const monsterHealthBarLevelText = this._scene.add.text(
-      characterNameGameText.width + 35,
+      characterNameGameText.width + 50,
       23,
-      ``,
+      `L${this.level}`,
       {
         color: "#ED474B",
         fontSize: "28px",
