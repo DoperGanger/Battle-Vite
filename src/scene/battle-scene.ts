@@ -80,10 +80,10 @@ export default class BattleScene extends Phaser.Scene {
       this.#battleMenu.handlePlayerInput("OK");
       this.#activePlayerAttackIndex = this.#battleMenu.selectedAttack;
 
-      if(this.#battleMenu.currentState === CurrentState.CHIP){
-        this.#battleMenu.hideChipMenu()
-        this.#battleMenu.showMainBattleMenu()
-        return
+      if (this.#battleMenu.currentState === CurrentState.CHIP) {
+        this.#battleMenu.hideChipMenu();
+        this.#battleMenu.showMainBattleMenu();
+        return;
       }
 
       if (this.#battleMenu.currentState === CurrentState.MENU) {
@@ -172,14 +172,22 @@ export default class BattleScene extends Phaser.Scene {
       return;
     }
     this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
-      [`Supper Effective, ${this.#activeEnemyCharacter.attacks[0].name} attack you back`],
+      [
+        "Super Effective!",
+        `${this.#activeEnemyCharacter.attacks[0].name} attack you back`,
+      ],
       () => {
         this.time.delayedCall(500, () => {
           // Characters attacking alternately
           this.#activePlayerCharacter.takeDamage(
             this.#activeEnemyCharacter.baseAttack,
             () => {
-              this.#posBattleSequenceCheck();
+              this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
+                ["Not Very Effective"],
+                () => {
+                  this.#posBattleSequenceCheck();
+                }
+              );
             }
           );
         });
