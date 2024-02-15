@@ -18,8 +18,9 @@ export class BattleMenu {
   #battleTextGameObjectLine3!: Phaser.GameObjects.Text;
   #selectedBattleMenuOption!: battleMenuOptions;
   #selectedAttackIndex!: number; //#
+  #selectedChipIndex!: string; //string
 
-  #selectedChipOption!: chipOptions;
+  #selectedChipMenuOption!: chipOptions;
 
   #chipPhaserContainerGameObject!: Phaser.GameObjects.Container;
   #chipCursorPhaserImageGameObject!: Phaser.GameObjects.Image;
@@ -37,7 +38,7 @@ export class BattleMenu {
 
   constructor(scene: Phaser.Scene) {
     this.#scene = scene;
-    this.#selectedChipOption = CHIP_OPTIONS.ATTACK;
+    this.#selectedChipMenuOption = CHIP_OPTIONS.ATTACK;
     this.#selectedBattleMenuOption = BATTLE_MENU_OPTIONS.FIGHT;
     this.#queuedInfoPanelMessages = [];
     this.#queuedInfoPanelCallback = undefined;
@@ -51,6 +52,10 @@ export class BattleMenu {
 
   get selectedAttack(): number {
     return this.#selectedAttackIndex;
+  }
+
+  get selectedChip(): string {
+    return this.#selectedChipIndex;
   }
 
   showChipMenu() {
@@ -185,6 +190,11 @@ export class BattleMenu {
     );
   }
 
+  #showChipOnCharacters() {
+    this.#scene.add.text(330, 20, this.#selectedChipIndex, BATTLE_UI_TEXT_STYLE);
+    this.#scene.add.text(900, 20, "SPEED", BATTLE_UI_TEXT_STYLE);
+  }
+
   #createChipMenu() {
     // text and container
     // Text line
@@ -309,13 +319,13 @@ export class BattleMenu {
   }
 
   #updateSelectedChipOptionFromInput(direction: direction | "OK" | "CANCEL") {
-    if (this.#selectedChipOption === CHIP_OPTIONS.ATTACK) {
+    if (this.#selectedChipMenuOption === CHIP_OPTIONS.ATTACK) {
       switch (direction) {
         case DIRECTION.RIGHT:
-          this.#selectedChipOption = CHIP_OPTIONS.SPEED;
+          this.#selectedChipMenuOption = CHIP_OPTIONS.SPEED;
           return;
         case DIRECTION.DOWN:
-          this.#selectedChipOption = CHIP_OPTIONS.DEFENSE;
+          this.#selectedChipMenuOption = CHIP_OPTIONS.DEFENSE;
           return;
         case DIRECTION.LEFT:
         case DIRECTION.UP:
@@ -325,10 +335,10 @@ export class BattleMenu {
           return;
       }
     }
-    if (this.#selectedChipOption === CHIP_OPTIONS.SPEED) {
+    if (this.#selectedChipMenuOption === CHIP_OPTIONS.SPEED) {
       switch (direction) {
         case DIRECTION.LEFT:
-          this.#selectedChipOption = CHIP_OPTIONS.ATTACK;
+          this.#selectedChipMenuOption = CHIP_OPTIONS.ATTACK;
           return;
         case DIRECTION.DOWN:
         case DIRECTION.RIGHT:
@@ -339,12 +349,12 @@ export class BattleMenu {
           return;
       }
     }
-    if (this.#selectedChipOption === CHIP_OPTIONS.DEFENSE) {
+    if (this.#selectedChipMenuOption === CHIP_OPTIONS.DEFENSE) {
       switch (direction) {
         case DIRECTION.RIGHT:
           return;
         case DIRECTION.UP:
-          this.#selectedChipOption = CHIP_OPTIONS.ATTACK;
+          this.#selectedChipMenuOption = CHIP_OPTIONS.ATTACK;
           return;
         case DIRECTION.LEFT:
         case DIRECTION.DOWN:
@@ -374,7 +384,7 @@ export class BattleMenu {
   }
 
   #moveChipCursor() {
-    switch (this.#selectedChipOption) {
+    switch (this.#selectedChipMenuOption) {
       case CHIP_OPTIONS.ATTACK:
         this.#chipCursorPhaserImageGameObject.setPosition(
           ASSET_KEYS.CURSOR_X,
@@ -548,27 +558,28 @@ export class BattleMenu {
 
     this.#selectedAttackIndex = selectedMoveIndex;
   }
-  
+
   #handlePlayerChooseChipWithIndex() {
-    let selectedMoveIndex = 0;
+    let selectedChipIndex = "ATTACK";
     this.hideChipMenu();
     this.hideMainBattleMenu();
-    switch (this.#selectedBattleMenuOption) {
-      case BATTLE_MENU_OPTIONS.FIGHT:
-        selectedMoveIndex = 0;
-        console.log("index", selectedMoveIndex);
+    switch (this.#selectedChipMenuOption) {
+      case CHIP_OPTIONS.ATTACK:
+        selectedChipIndex = "ATTACK";
+        console.log("chip", selectedChipIndex);
         break;
-      case BATTLE_MENU_OPTIONS.PAY:
-        selectedMoveIndex = 1;
-        console.log("index", selectedMoveIndex);
+      case CHIP_OPTIONS.SPEED:
+        selectedChipIndex = "SPEED";
+        console.log("chip", selectedChipIndex);
         break;
-      case BATTLE_MENU_OPTIONS.RUN:
-        selectedMoveIndex = 2;
-        console.log("index", selectedMoveIndex);
+      case CHIP_OPTIONS.DEFENSE:
+        selectedChipIndex = "DEFENSE";
+        console.log("chip", selectedChipIndex);
         break;
       default:
     }
 
-    this.#selectedAttackIndex = selectedMoveIndex;
+    this.#selectedChipIndex = selectedChipIndex;
+    this.#showChipOnCharacters();
   }
 }

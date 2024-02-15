@@ -12,7 +12,7 @@ export interface Character {
   currentHp: number;
   baseAttack: number;
   attackIds: number[];
-  currentLevel: number;
+  currentLevel: string;
 }
 
 export interface Coordinate {

@@ -38,7 +38,7 @@ export default class BattleScene extends Phaser.Scene {
         maxHp: 25,
         attackIds: [1, 2, 3, 4], // Choose attack
         baseAttack: 20,
-        currentLevel: 6,
+        currentLevel: "",
       },
       scaleHealthBarBackgroundImageByY: 1, // Default value
     });
@@ -55,7 +55,7 @@ export default class BattleScene extends Phaser.Scene {
         maxHp: 25,
         attackIds: [4], // Choose attack
         baseAttack: 5,
-        currentLevel: 6,
+        currentLevel: "",
       },
       scaleHealthBarBackgroundImageByY: 1, // Default value
     });
@@ -172,7 +172,7 @@ export default class BattleScene extends Phaser.Scene {
       return;
     }
     this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
-      [` ${this.#activeEnemyCharacter.attacks[0].name} attack you back`],
+      [`Supper Effective, ${this.#activeEnemyCharacter.attacks[0].name} attack you back`],
       () => {
         this.time.delayedCall(500, () => {
           // Characters attacking alternately

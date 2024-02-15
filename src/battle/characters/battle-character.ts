@@ -59,7 +59,7 @@ export class BattleCharacter {
     return this._characterDetails.baseAttack;
   }
 
-  get level(): number {
+  get level(): string {
     return this._characterDetails.currentLevel;
   }
 
@@ -91,7 +91,7 @@ export class BattleCharacter {
     const monsterHealthBarLevelText = this._scene.add.text(
       characterNameGameText.width + 50,
       23,
-      `L${this.level}`,
+      `${this.level}`,
       {
         color: "#ED474B",
         fontSize: "28px",
