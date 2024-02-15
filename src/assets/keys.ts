@@ -51,3 +51,10 @@ export const DIRECTION = Object.freeze({
 } as const);
 export type direction = keyof typeof DIRECTION;
 
+export const CHIP_OPTIONS = Object.freeze({
+  ATTACK: "ATTACK",
+  SPEED: "SPEED",
+  DEFENSE: "DEFENSE",
+
+});
+export type chipOptions = keyof typeof CHIP_OPTIONS

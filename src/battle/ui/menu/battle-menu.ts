@@ -3,24 +3,32 @@ import {
   ASSET_KEYS,
   BATTLE_MENU_OPTIONS,
   BATTLE_UI_TEXT_STYLE,
+  CHIP_OPTIONS,
   DIRECTION,
   battleMenuOptions,
+  chipOptions,
   direction,
 } from "../../../assets/keys";
 import { CurrentState } from "../../../types/type";
 
 export class BattleMenu {
   #scene!: Phaser.Scene;
-  #mainBattleMenuPhaserContainerGameObject!: Phaser.GameObjects.Container;
   #battleTextGameObjectLine1!: Phaser.GameObjects.Text;
   #battleTextGameObjectLine2!: Phaser.GameObjects.Text;
-  #mainBattleMenuCursorPhaserImageGameObject!: Phaser.GameObjects.Image;
+  #battleTextGameObjectLine3!: Phaser.GameObjects.Text;
   #selectedBattleMenuOption!: battleMenuOptions;
   #selectedAttackIndex!: number; //#
 
+  #selectedChipOption!: chipOptions;
+
+  #chipPhaserContainerGameObject!: Phaser.GameObjects.Container;
+  #chipCursorPhaserImageGameObject!: Phaser.GameObjects.Image;
+  #mainBattleMenuPhaserContainerGameObject!: Phaser.GameObjects.Container;
+  #mainBattleMenuCursorPhaserImageGameObject!: Phaser.GameObjects.Image;
+
   // Attack state
   // public attackState!: boolean;
-  public currentState!: CurrentState;
+  public currentState!: CurrentState; // check state
 
   // Callback declare
   #queuedInfoPanelMessages!: string[];
@@ -29,18 +37,34 @@ export class BattleMenu {
 
   constructor(scene: Phaser.Scene) {
     this.#scene = scene;
+    this.#selectedChipOption = CHIP_OPTIONS.ATTACK;
     this.#selectedBattleMenuOption = BATTLE_MENU_OPTIONS.FIGHT;
     this.#queuedInfoPanelMessages = [];
     this.#queuedInfoPanelCallback = undefined;
     this.#waitingForPlayerInput = false;
     this.#createMainInfoPane();
-    this.#createMainBattlemenu();
+    this.#createChipMenu();
+    this.#createMainBattleMenu();
     // this.attackState = false; reset attack state
-    this.currentState = CurrentState.MENU;
+    this.currentState = CurrentState.CHIP;
   }
 
   get selectedAttack(): number {
     return this.#selectedAttackIndex;
+  }
+
+  showChipMenu() {
+    this.#chipPhaserContainerGameObject.setAlpha(1);
+    this.#battleTextGameObjectLine3.setAlpha(1);
+    this.#chipCursorPhaserImageGameObject.setPosition(
+      ASSET_KEYS.CURSOR_X,
+      ASSET_KEYS.CURSOR_Y
+    );
+  }
+
+  hideChipMenu() {
+    this.#battleTextGameObjectLine3.setAlpha(0);
+    this.#chipPhaserContainerGameObject.setAlpha(0);
   }
 
   showMainBattleMenu() {
@@ -79,6 +103,14 @@ export class BattleMenu {
     // Cursor handling
     this.#updateSelectedBattleMenuOptionFromInput(input);
     this.#moveMainBattleMenuCursor();
+
+    this.#updateSelectedChipOptionFromInput(input);
+    this.#moveChipCursor();
+
+    // Chip option selection
+    if (input === "OK") {
+      this.#handlePlayerChooseChipWithIndex();
+    }
 
     // Battle option selection
     if (input === "OK") {
@@ -121,6 +153,7 @@ export class BattleMenu {
   ///
 
   #createMainInfoPane() {
+    //lapisan biru luar
     const padding = 4;
     const rectHeight = 124;
     const borderRadius = 20; // Set the border radius
@@ -152,7 +185,57 @@ export class BattleMenu {
     );
   }
 
-  #createMainBattlemenu() {
+  #createChipMenu() {
+    // text and container
+    // Text line
+    this.#battleTextGameObjectLine3 = this.#scene.add.text(
+      30,
+      468,
+      "Choose your chip",
+      BATTLE_UI_TEXT_STYLE
+    );
+
+    // Cursor
+    this.#chipCursorPhaserImageGameObject = this.#scene.add
+      .image(ASSET_KEYS.CURSOR_X, ASSET_KEYS.CURSOR_Y, ASSET_KEYS.CURSOR, 0)
+      .setOrigin(0.5)
+      .setScale(2.5);
+
+    this.#chipPhaserContainerGameObject = this.#scene.add.container(530, 448, [
+      this.#createChipSubPane(),
+      this.#scene.add.text(75, 22, CHIP_OPTIONS.ATTACK, BATTLE_UI_TEXT_STYLE),
+      this.#scene.add.text(260, 22, CHIP_OPTIONS.SPEED, BATTLE_UI_TEXT_STYLE),
+      this.#scene.add.text(75, 70, CHIP_OPTIONS.DEFENSE, BATTLE_UI_TEXT_STYLE),
+      this.#chipCursorPhaserImageGameObject,
+    ]);
+
+    this.hideChipMenu();
+  }
+
+  #createChipSubPane() {
+    // lapisan ungu kanan
+    const rectWidth = 490;
+    const rectHeight = 124;
+    const borderRadius = 20; // Set the border radius
+
+    // Create a graphics object
+    const graphics = this.#scene.add.graphics();
+
+    // Set line style for the border
+    graphics.lineStyle(8, 0x905ac2, 1);
+
+    // Set fill style for the rectangle
+    graphics.fillStyle(0xede4f3, 1);
+
+    // Draw a rounded rectangle
+    graphics.fillRoundedRect(0, 0, rectWidth, rectHeight, borderRadius);
+    graphics.strokeRoundedRect(0, 0, rectWidth, rectHeight, borderRadius);
+
+    return graphics;
+  }
+
+  #createMainBattleMenu() {
+    // text and container
     // Text line
     this.#battleTextGameObjectLine1 = this.#scene.add.text(
       30,
@@ -204,6 +287,7 @@ export class BattleMenu {
   }
 
   #createMainInfoSubPane() {
+    // lapisan ungu kanan
     const rectWidth = 490;
     const rectHeight = 124;
     const borderRadius = 20; // Set the border radius
@@ -222,6 +306,99 @@ export class BattleMenu {
     graphics.strokeRoundedRect(0, 0, rectWidth, rectHeight, borderRadius);
 
     return graphics;
+  }
+
+  #updateSelectedChipOptionFromInput(direction: direction | "OK" | "CANCEL") {
+    if (this.#selectedChipOption === CHIP_OPTIONS.ATTACK) {
+      switch (direction) {
+        case DIRECTION.RIGHT:
+          this.#selectedChipOption = CHIP_OPTIONS.SPEED;
+          return;
+        case DIRECTION.DOWN:
+          this.#selectedChipOption = CHIP_OPTIONS.DEFENSE;
+          return;
+        case DIRECTION.LEFT:
+        case DIRECTION.UP:
+        case DIRECTION.NONE:
+          return;
+        default:
+          return;
+      }
+    }
+    if (this.#selectedChipOption === CHIP_OPTIONS.SPEED) {
+      switch (direction) {
+        case DIRECTION.LEFT:
+          this.#selectedChipOption = CHIP_OPTIONS.ATTACK;
+          return;
+        case DIRECTION.DOWN:
+        case DIRECTION.RIGHT:
+        case DIRECTION.UP:
+        case DIRECTION.NONE:
+          return;
+        default:
+          return;
+      }
+    }
+    if (this.#selectedChipOption === CHIP_OPTIONS.DEFENSE) {
+      switch (direction) {
+        case DIRECTION.RIGHT:
+          return;
+        case DIRECTION.UP:
+          this.#selectedChipOption = CHIP_OPTIONS.ATTACK;
+          return;
+        case DIRECTION.LEFT:
+        case DIRECTION.DOWN:
+        case DIRECTION.NONE:
+          return;
+        default:
+          return;
+      }
+    }
+    // if (this.#selectedBattleMenuOption === BATTLE_MENU_OPTIONS.FLEE) {
+    //   switch (direction) {
+    //     case DIRECTION.LEFT:
+    //       this.#selectedBattleMenuOption = BATTLE_MENU_OPTIONS.ITEM;
+    //       return;
+    //     case DIRECTION.UP:
+    //       this.#selectedBattleMenuOption = BATTLE_MENU_OPTIONS.SWITCH;
+    //       return;
+    //     case DIRECTION.RIGHT:
+    //     case DIRECTION.DOWN:
+    //     case DIRECTION.NONE:
+    //       return;
+    //     default:
+    //       return
+    //   }
+    //   return;
+    // }
+  }
+
+  #moveChipCursor() {
+    switch (this.#selectedChipOption) {
+      case CHIP_OPTIONS.ATTACK:
+        this.#chipCursorPhaserImageGameObject.setPosition(
+          ASSET_KEYS.CURSOR_X,
+          ASSET_KEYS.CURSOR_Y
+        );
+        return;
+      case CHIP_OPTIONS.SPEED:
+        this.#chipCursorPhaserImageGameObject.setPosition(
+          228,
+          ASSET_KEYS.CURSOR_Y
+        );
+        return;
+      case CHIP_OPTIONS.DEFENSE:
+        this.#chipCursorPhaserImageGameObject.setPosition(
+          ASSET_KEYS.CURSOR_X,
+          86
+        );
+        return;
+      // case BATTLE_MENU_OPTIONS.FLEE:
+      //   this.#mainBattleMenuCursorPhaserImageGameObject.setPosition(228, 86);
+      //   return;
+      default:
+        return;
+    }
   }
 
   #updateSelectedBattleMenuOptionFromInput(
@@ -351,6 +528,30 @@ export class BattleMenu {
 
   #handlePlayerChooseMainBattleOptionWithIndex() {
     let selectedMoveIndex = 0;
+    this.hideChipMenu();
+    this.hideMainBattleMenu();
+    switch (this.#selectedBattleMenuOption) {
+      case BATTLE_MENU_OPTIONS.FIGHT:
+        selectedMoveIndex = 0;
+        console.log("index", selectedMoveIndex);
+        break;
+      case BATTLE_MENU_OPTIONS.PAY:
+        selectedMoveIndex = 1;
+        console.log("index", selectedMoveIndex);
+        break;
+      case BATTLE_MENU_OPTIONS.RUN:
+        selectedMoveIndex = 2;
+        console.log("index", selectedMoveIndex);
+        break;
+      default:
+    }
+
+    this.#selectedAttackIndex = selectedMoveIndex;
+  }
+  
+  #handlePlayerChooseChipWithIndex() {
+    let selectedMoveIndex = 0;
+    this.hideChipMenu();
     this.hideMainBattleMenu();
     switch (this.#selectedBattleMenuOption) {
       case BATTLE_MENU_OPTIONS.FIGHT:

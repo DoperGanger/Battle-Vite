@@ -31,4 +31,5 @@ export enum CurrentState {
   ATTACK,
   PAY,
   RUN,
+  CHIP
 }

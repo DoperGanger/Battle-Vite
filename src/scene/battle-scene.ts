@@ -61,8 +61,9 @@ export default class BattleScene extends Phaser.Scene {
     });
 
     // Render main info pane and sub info pane
-    this.#battleMenu = new BattleMenu(this); //?
-    this.#battleMenu.showMainBattleMenu();
+    this.#battleMenu = new BattleMenu(this); //
+    this.#battleMenu.showChipMenu();
+    // this.#battleMenu.showMainBattleMenu();
 
     // Cursor key control
     this.#cursorKeys = this.input.keyboard.createCursorKeys();
@@ -78,6 +79,12 @@ export default class BattleScene extends Phaser.Scene {
     if (wasSpaceKeyPressed) {
       this.#battleMenu.handlePlayerInput("OK");
       this.#activePlayerAttackIndex = this.#battleMenu.selectedAttack;
+
+      if(this.#battleMenu.currentState === CurrentState.CHIP){
+        this.#battleMenu.hideChipMenu()
+        this.#battleMenu.showMainBattleMenu()
+        return
+      }
 
       if (this.#battleMenu.currentState === CurrentState.MENU) {
         if (this.#activePlayerAttackIndex === 0) {
@@ -216,14 +223,20 @@ export default class BattleScene extends Phaser.Scene {
 
   #handlePay() {
     this.cameras.main.fadeOut(2600, 0, 0, 0);
-    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      this.scene.start(SCENE_KEYS.BATTLE_SCENE);
-    });
+    this.cameras.main.once(
+      Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+      () => {
+        this.scene.start(SCENE_KEYS.BATTLE_SCENE);
+      }
+    );
   }
   #handleRun() {
     this.cameras.main.fadeOut(2600, 0, 0, 0);
-    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      this.scene.start(SCENE_KEYS.BATTLE_SCENE);
-    });
+    this.cameras.main.once(
+      Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+      () => {
+        this.scene.start(SCENE_KEYS.BATTLE_SCENE);
+      }
+    );
   }
 }
