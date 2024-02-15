@@ -96,6 +96,7 @@ export default class BattleScene extends Phaser.Scene {
           this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
             [`You Paid the cops! `],
             () => {
+              this.#battleMenu.hideChipMenu();
               this.#handlePay();
             }
           );
@@ -105,6 +106,7 @@ export default class BattleScene extends Phaser.Scene {
           this.#battleMenu.updateInfoPaneMessagesAndWaitForInput(
             [`Escaping... `],
             () => {
+              this.#battleMenu.hideChipMenu();
               this.#handleRun();
             }
           );

@@ -54,10 +54,6 @@ export class BattleMenu {
     return this.#selectedAttackIndex;
   }
 
-  get selectedChip(): string {
-    return this.#selectedChipIndex;
-  }
-
   showChipMenu() {
     this.#chipPhaserContainerGameObject.setAlpha(1);
     this.#battleTextGameObjectLine3.setAlpha(1);
@@ -68,8 +64,8 @@ export class BattleMenu {
   }
 
   hideChipMenu() {
-    this.#battleTextGameObjectLine3.setAlpha(0);
     this.#chipPhaserContainerGameObject.setAlpha(0);
+    this.#battleTextGameObjectLine3.setAlpha(0);
   }
 
   showMainBattleMenu() {
@@ -113,7 +109,7 @@ export class BattleMenu {
     this.#moveChipCursor();
 
     // Chip option selection
-    if (input === "OK") {
+    if (input === "OK" && this.currentState === CurrentState.CHIP) {
       this.#handlePlayerChooseChipWithIndex();
     }
 
@@ -191,7 +187,12 @@ export class BattleMenu {
   }
 
   #showChipOnCharacters() {
-    this.#scene.add.text(330, 20, this.#selectedChipIndex, BATTLE_UI_TEXT_STYLE);
+    this.#scene.add.text(
+      330,
+      20,
+      this.#selectedChipIndex,
+      BATTLE_UI_TEXT_STYLE
+    );
     this.#scene.add.text(900, 20, "SPEED", BATTLE_UI_TEXT_STYLE);
   }
 
@@ -554,6 +555,7 @@ export class BattleMenu {
         console.log("index", selectedMoveIndex);
         break;
       default:
+        break;
     }
 
     this.#selectedAttackIndex = selectedMoveIndex;
@@ -577,6 +579,8 @@ export class BattleMenu {
         console.log("chip", selectedChipIndex);
         break;
       default:
+        break;
+
     }
 
     this.#selectedChipIndex = selectedChipIndex;
